@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/main_layout_background"
+        android:paddingVertical="16dp">
+
+        <RadioGroup
+            android:id="@+id/inputTypeRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <RadioButton
+                android:id="@+id/textRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/radio_button_selector_background"
+                android:button="@null"
+                android:checked="true"
+                android:paddingHorizontal="28dp"
+                android:paddingVertical="2dp"
+                android:text="Text"
+                android:textColor="@color/radio_button_selector_color"
+                android:textStyle="bold" />
+
+            <RadioButton
+                android:id="@+id/pdfRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/radio_button_selector_background"
+                android:button="@null"
+                android:paddingHorizontal="28dp"
+                android:text="PDF"
+                android:textColor="@color/radio_button_selector_color"
+                android:textStyle="bold" />
+
+        </RadioGroup>
+
+        <LinearLayout
+            android:id="@+id/inputLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_marginTop="28dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inputTypeRadioGroup">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/paste_text_to_summarize"
+                app:boxStrokeColor="@color/radio_button_selector_color"
+                app:hintTextColor="@color/radio_button_selector_color">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top|start"
+
+                    android:inputType="textMultiLine"
+                    android:minLines="4" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/inputErrorTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/red"
+                tools:text="Error: asdasdasdas das dfas fasf asf dsf af aqsf as fasf asf asf asf asf asf asf asf asf as" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/pdfSelectorLinearLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="28dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/pdf_selector_background"
+            android:foreground="?selectableItemBackground"
+            android:orientation="vertical"
+            android:paddingHorizontal="28dp"
+            android:paddingVertical="12dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/inputLinearLayout"
+            tools:visibility="visible">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:src="@drawable/pdf_document"
+                app:tint="@color/darkGray" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="4dp"
+                android:text="@string/upload_pdf"
+                android:textColor="@color/darkGray"
+                android:textSize="18sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/selectedPdfTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:alpha=".7"
+                android:background="@drawable/selected_pdf_text_background"
+                android:drawableStart="@drawable/selected_pdf_icon_foreground"
+                android:gravity="center|start"
+                android:padding="8dp"
+                android:textColor="@color/almostWhite"
+                android:visibility="gone"
+                tools:text="SelectedPdf.pdf"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/pdfErrorTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/red"
+                tools:text="Error: asdasdasdas das dfas fasf asf dsf af aqsf as fasf asf asf asf asf asf asf asf asf as" />
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/summarize_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="Summarize"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pdfSelectorLinearLayout" />
+
+        <com.google.android.material.loadingindicator.LoadingIndicator
+            android:id="@+id/loadingIndicator"
+            style="@style/Widget.Material3.LoadingIndicator.Contained"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:containerColor="@color/radio_button_selector_color"
+            app:containerHeight="80dp"
+            app:containerWidth="80dp"
+            app:indicatorColor="?colorPrimary"
+            app:indicatorSize="68dp"
+            app:layout_constraintBottom_toTopOf="@+id/summarize_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inputTypeRadioGroup" />
+
+        <TextView
+            android:id="@+id/summarizeErrorTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:padding="12dp"
+            android:text="Output will appear here"
+            android:textColor="@color/red"
+            android:textStyle="italic"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/summarize_button" />
+
+        <TextView
+            android:id="@+id/outputTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@drawable/main_layout_background"
+            android:backgroundTint="@color/outputBackgroundColor"
+            android:padding="12dp"
+            android:textColor="@color/outputTextColor"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/summarizeErrorTextView"
+            tools:text="Output will appear here" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

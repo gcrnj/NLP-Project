@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">NLP Project</string>
+    <string name="paste_text_to_summarize">Paste text to summarize...</string>
+    <string name="upload_pdf">Upload PDF</string>
+    <string name="no_pdf_selected_error_text">Error: No PDF selected. Please select a PDF to proceed.</string>
+    <string name="empty_input_error_text">Error: No text to summarize. Please fill the text box.</string>
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#5B765C</color>
+
+    <color name="radioTextColor">@color/white</color>
+
+    <color name="inputBackgroundColor">@color/almostBlack</color>
+
+    <color name="outputBackgroundColor">@color/almostWhite</color>
+    <color name="outputTextColor">@color/almostBlack</color>
+
+
+</resources>
