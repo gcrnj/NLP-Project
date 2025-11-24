@@ -1,22 +1,20 @@
 package com.giotech.nlpproject
 
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.File
 import java.security.cert.X509Certificate
+import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
+
 class NLPService() {
 
     val retrofit = Retrofit.Builder()
-        .baseUrl("https://www.example.com")
+        .baseUrl("http://172.20.10.4:8000")
         .client(getUnsafeOkHttpClient())  // <-- add unsafe client
         .addConverterFactory(GsonConverterFactory.create())
         .build()
@@ -40,6 +38,10 @@ class NLPService() {
             OkHttpClient.Builder()
                 .sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
                 .hostnameVerifier { _, _ -> true } // allow all hostnames
+                // Increase timeouts here
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
                 .build()
         } catch (e: Exception) {
             throw RuntimeException(e)
@@ -53,10 +55,6 @@ class NLPService() {
      * service.processPdf(pdfPart)
      *```
      */
-    private fun createPdfPart(file: File): MultipartBody.Part {
-        val requestFile = file.asRequestBody("application/pdf".toMediaType())
-        return MultipartBody.Part.createFormData("file", file.name, requestFile)
-    }
 
     private fun getNLPResponse(response: Response<NLPResponse>): NLPResponse? {
         return if (response.isSuccessful) {
@@ -64,17 +62,6 @@ class NLPService() {
         } else {
             // handle error (throw exception or return null)
             NLPResponse(error = response.errorBody().toString())
-        }
-    }
-
-    suspend fun summarizeFromPdf(file: File): NLPResponse? {
-        val pdfPart = createPdfPart(file)
-        try {
-            val response = nlpApi.processPdf(pdfPart)
-            return getNLPResponse(response)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return NLPResponse(error = e.message)
         }
     }
 

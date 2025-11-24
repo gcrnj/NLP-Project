@@ -52,7 +52,8 @@ dependencies {
     implementation(libs.retrofit.gson)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
-
+    // PDF to text
+    implementation("com.tom-roush:pdfbox-android:2.0.27.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

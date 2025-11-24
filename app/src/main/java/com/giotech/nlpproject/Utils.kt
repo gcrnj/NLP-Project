@@ -6,6 +6,8 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.OpenableColumns
 import android.view.View
+import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -89,9 +91,10 @@ fun TextView.animateText(newText: String, duration: Long = 200L) {
 
 fun TextView.typewriterText(
     content: String,
+    scrollView: ScrollView,
     minDelay: Long = 2L,   // Faster minimum
     maxDelay: Long = 7L   // Faster maximum
-) {
+): Long {
     text = ""
 
     val length = content.length
@@ -114,9 +117,11 @@ fun TextView.typewriterText(
                 index++
                 handler.postDelayed(this, delayPerChar)
             }
+            scrollView.scrollTo(0, bottom)
         }
     }
 
     handler.post(runnable)
+    return delayPerChar * length
 }
 

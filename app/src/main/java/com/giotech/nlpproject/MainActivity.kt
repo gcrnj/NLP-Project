@@ -1,29 +1,25 @@
 package com.giotech.nlpproject
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.giotech.nlpproject.databinding.ActivityMainBinding
 import com.google.android.material.textfield.TextInputEditText
+import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
+import com.tom_roush.pdfbox.pdmodel.PDDocument
+import com.tom_roush.pdfbox.text.PDFTextStripper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.File
+import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,18 +35,31 @@ class MainActivity : AppCompatActivity() {
         NLPService()
     }
 
-    var selectedPdf: File? = null
+    var selectedPdfString: String? = null
 
 
     private val pickPdfLauncher = registerForActivityResult(
         ActivityResultContracts.OpenDocument()
     ) { uri: Uri? ->
         uri?.let {
+            selectedPdfString = null
+            try {
+                contentResolver.openInputStream(uri)?.use { inputStream ->
+                    PDDocument.load(inputStream).use { pdfDocument ->
+                        if (!pdfDocument.isEncrypted) {
+                            selectedPdfString = PDFTextStripper().getText(pdfDocument)
+                        }
+                    }
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+
             // You now have the Uri of the PDF
-            selectedPdf = uri.toFile(this)
+            val pdf = uri.toFile(this)
             viewBinding.selectedPdfTextView.apply {
                 visible()
-                text = selectedPdf?.name ?: ""
+                text = pdf.name
             }
             // Pass inputStream or uri to your NLP API
         }
@@ -58,6 +67,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        PDFBoxResourceLoader.init(getApplicationContext());
         enableEdgeToEdge()
         setContentView(viewBinding.root)
         ViewCompat.setOnApplyWindowInsetsListener(viewBinding.root) { v, insets ->
@@ -73,11 +83,11 @@ class MainActivity : AppCompatActivity() {
     private suspend fun getSummarizedResponse(): NLPResponse? = with(viewBinding) {
         delay(1000)
         return if (pdfRadioButton.isChecked) {
-            selectedPdf?.let {
-                nlpService.summarizeFromPdf(it)
+            selectedPdfString?.let {
+                nlpService.summarizeFromText(it)
             } ?: run {
                 pdfErrorTextView.visible()
-                pdfErrorTextView.text = getString(R.string.no_pdf_selected_error_text)
+                pdfErrorTextView.typewriterText(getString(R.string.no_pdf_selected_error_text), root)
                 null
             }
         } else {
@@ -86,19 +96,7 @@ class MainActivity : AppCompatActivity() {
                 nlpService.summarizeFromText(inputText)
             } else {
                 inputErrorTextView.visible()
-                inputErrorTextView.text = getString(R.string.empty_input_error_text)
-                inputErrorTextView.typewriterText(
-                    "${getString(R.string.empty_input_error_text)} ${
-                        getString(
-                            R.string.empty_input_error_text
-                        )
-                    } ${getString(R.string.empty_input_error_text)} ${getString(R.string.empty_input_error_text)} ${
-                        getString(
-                            R.string.empty_input_error_text
-                        )
-                    } ${getString(R.string.empty_input_error_text)}"
-                )
-
+                inputErrorTextView.typewriterText(getString(R.string.empty_input_error_text), root)
                 null
             }
         }
@@ -141,13 +139,13 @@ class MainActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
                 delay(1000)
-                getSummarizedResponse()?.let {
-                    if (!it.error.isNullOrBlank()) {
+                getSummarizedResponse()?.let { summarizedResponse ->
+                    if (summarizedResponse.error.isNullOrBlank()) {
                         outputTextView.visible()
-                        outputTextView.text = it.summarized
+                        outputTextView.typewriterText(summarizedResponse.summary, root)
                     } else {
                         summarizeErrorTextView.visible()
-                        summarizeErrorTextView.text = it.error ?: "Unknown error"
+                        summarizeErrorTextView.typewriterText(summarizedResponse.error, root)
                         Toast.makeText(
                             this@MainActivity,
                             summarizeErrorTextView.text,

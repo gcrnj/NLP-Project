@@ -1,28 +1,17 @@
 package com.giotech.nlpproject
 
-import okhttp3.MultipartBody
 import retrofit2.Response
-import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Headers
-import retrofit2.http.Multipart
-import retrofit2.http.POST
-import retrofit2.http.Part
+import retrofit2.http.Query
 
 interface NLPApi {
 
 
-    @POST("/process-nlp")
+    @GET("/summarize")
     @Headers("Content-Type: text/plain")
     suspend fun processText(
-        @Body text: String
+        @Query("text") text: String
     ): Response<NLPResponse>
-
-
-    @Multipart
-    @POST("/process-nlp")
-    suspend fun processPdf(
-        @Part pdf: MultipartBody.Part
-    ): Response<NLPResponse>
-
 
 }

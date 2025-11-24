@@ -3,8 +3,8 @@ package com.giotech.nlpproject
 import java.io.Serializable
 
 data class NLPResponse(
-    val summarized: String = "",
-    val tags: List<Tag> = emptyList(),
+    val summary: String = "",
+    val entities: HashMap<String, List<String>> = hashMapOf(),
     val error: String? = null, // if error
 ): Serializable
 
